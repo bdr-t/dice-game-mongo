@@ -8,18 +8,7 @@ const userSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
-  games: {
-    type: [
-      {
-        sumDice: {
-          type: Number,
-        },
-        result: {
-          type: Number,
-        },
-      },
-    ],
-  },
+  games: [{ sumDice: Number, result: Number }],
   succes_rate: {
     type: Number,
     default: 0,

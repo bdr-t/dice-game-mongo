@@ -42,20 +42,6 @@ const userTwo = {
       sumDice: 10,
       resutlt: 0,
     },
-    {
-      sumDice: 8,
-      resutlt: 0,
-    },
-
-    {
-      sumDice: 8,
-      resutlt: 0,
-    },
-
-    {
-      sumDice: 6,
-      resutlt: 0,
-    },
   ],
 
   succes_rate: 0,

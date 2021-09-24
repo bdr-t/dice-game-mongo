@@ -13,13 +13,13 @@ const setupTestDB = require('../utils/setupTestDB');
 const { User } = require('../../src/models');
 // const { roleRights } = require('../../src/config/roles');
 // const { tokenTypes } = require('../../src/config/tokens');
-const { userOne, insertUsers } = require('../fixtures/user.fixture');
+const { userOne, userTwo, insertUsers } = require('../fixtures/user.fixture');
 // const { userOneAccessToken, adminAccessToken } = require('../fixtures/token.fixture');
 
 setupTestDB();
 
 describe('Auth routes', () => {
-  describe('POST /v1/auth/register', () => {
+  describe('POST /auth/register', () => {
     let newUser;
     beforeEach(() => {
       newUser = {
@@ -32,6 +32,7 @@ describe('Auth routes', () => {
       const res = await request(app).post('/auth/register').send(newUser).expect(httpStatus.CREATED);
 
       expect(res.body.user).not.toHaveProperty('password');
+
       expect(res.body.user).toEqual({
         id: expect.anything(),
         name: newUser.name,
@@ -71,6 +72,59 @@ describe('Auth routes', () => {
       newUser.password = '11111111';
 
       await request(app).post('/auth/register').send(newUser).expect(httpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('POST /auth/login', () => {
+    test('should return 200 and login user if name and password match', async () => {
+      await insertUsers([userTwo]);
+      const loginCredentials = {
+        name: userTwo.name,
+        password: userTwo.password,
+      };
+
+      const res = await request(app).post('/auth/login').send(loginCredentials).expect(httpStatus.OK);
+
+      expect(res.body.user).toEqual({
+        id: expect.anything(),
+        name: userTwo.name,
+        games: [
+          {
+            result: userTwo.games[0].result,
+            sumDice: userTwo.games[0].sumDice,
+            _id: expect.anything(),
+          },
+        ],
+        succes_rate: userTwo.succes_rate,
+      });
+
+      expect(res.body.tokens).toEqual({
+        access: { token: expect.anything(), expires: expect.anything() },
+        refresh: { token: expect.anything(), expires: expect.anything() },
+      });
+    });
+
+    test('should return 401 error if there are no users with that name', async () => {
+      const loginCredentials = {
+        name: userOne.name,
+        password: userOne.password,
+      };
+
+      const res = await request(app).post('/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
+
+      expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect name or password' });
+    });
+
+    test('should return 401 error if password is wrong', async () => {
+      await insertUsers([userOne]);
+      const loginCredentials = {
+        name: userOne.name,
+        password: 'wrongPassword1',
+      };
+
+      const res = await request(app).post('/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
+
+      expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect name or password' });
     });
   });
 });

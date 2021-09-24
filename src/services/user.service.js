@@ -15,6 +15,16 @@ const createUser = async (userBody) => {
   return User.create(userBody);
 };
 
+/**
+ * Get user by name
+ * @param {string} name
+ * @returns {Promise<User>}
+ */
+const getUserByName = async (name) => {
+  return User.findOne({ name });
+};
+
 module.exports = {
   createUser,
+  getUserByName,
 };
