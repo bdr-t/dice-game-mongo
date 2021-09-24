@@ -15,7 +15,7 @@ const userOne = {
       resutlt: 0,
     },
     {
-      sumDice: 12,
+      sumDice: 7,
       resutlt: 1,
     },
 
@@ -25,7 +25,7 @@ const userOne = {
     },
 
     {
-      sumDice: 11,
+      sumDice: 7,
       resutlt: 1,
     },
   ],
