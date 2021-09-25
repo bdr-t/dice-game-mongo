@@ -21,6 +21,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Create env file
+        run: |
+          touch .env
+          echo MONGODB_URL=mongodb://127.0.0.1:27017/dice-game-bader >> .env
+          echo PORT=3000 >> .env
+          cat .env
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
@@ -29,3 +35,4 @@ jobs:
     - run: yarn
     - run: yarn lint
     - run: yarn test
+
